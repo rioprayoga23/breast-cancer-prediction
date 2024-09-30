@@ -19,8 +19,8 @@ cloudinary.config(
 )
 
 # Folder untuk menyimpan input dan output
-UPLOAD_FOLDER = './input'
-OUTPUT_FOLDER = './static/output'
+UPLOAD_FOLDER = './static/temp_input'
+OUTPUT_FOLDER = './static/temp_output'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
