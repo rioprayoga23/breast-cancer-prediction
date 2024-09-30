@@ -4,3 +4,4 @@ opencv_python
 Pillow
 streamlit
 tensorflow
+python-dotenv
