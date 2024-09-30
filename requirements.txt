@@ -1,0 +1,6 @@
+absl_py
+numpy
+opencv_python
+Pillow
+streamlit
+tensorflow
