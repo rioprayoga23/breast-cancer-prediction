@@ -83,13 +83,14 @@
     <div class="container mx-auto pt-20 pb-20 flex">
       <!-- Left Aligned Content -->
       <div class="w-1/2 text-left">
-        <section class="text-left mb-6">
-          <h1 class="text-5xl font-extrabold text-white mb-4">
+        <section class="text-left mb-8">
+          <h1 class="text-5xl font-extrabold text-white mb-2 leading-tight">
             Prediction Result
           </h1>
-          <p class="text-lg text-gray-100 leading-relaxed">
-            Here is the result of your prediction. You can download the image or
-            try again.
+          <p class="text-lg text-gray-200 leading-relaxed">
+            Here is the result of your prediction. You can download
+            <br />
+            the image or try again.
           </p>
         </section>
 
@@ -114,25 +115,25 @@
             <div class="flex gap-1">
               <button
                 id="copyLinkButton"
-                class="flex items-center px-4 py-2 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition duration-200"
+                class="flex items-center px-3 text-sm py-2 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition duration-200"
                 onclick="copyLink()"
               >
                 <img
                   src="/static/assets/copy-link.png"
                   alt="Copy Link"
-                  style="width: 25px; margin-right: 8px"
+                  style="width: 20px; margin-right: 8px"
                 />
                 Copy Link
               </button>
               <button
                 id="whatsappShareButton"
-                class="flex items-center ml-2 px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-200"
+                class="flex items-center ml-2 px-3 text-sm py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-200"
                 onclick="shareToWhatsApp()"
               >
                 <img
                   src="/static/assets/whatsapp.png"
                   alt="Share on WhatsApp"
-                  style="width: 25px; margin-right: 8px"
+                  style="width: 20px; margin-right: 8px"
                 />
                 Share on WhatsApp
               </button>
