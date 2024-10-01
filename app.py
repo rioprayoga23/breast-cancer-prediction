@@ -97,5 +97,31 @@ def show_result():
     image_url = request.args.get('image_url')
     return render_template('result.html', image_url=image_url)
 
+# Route untuk mengunduh gambar
+import requests
+from flask import Response
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    image_url = request.args.get('image_url')
+
+    # Download the image from Cloudinary or any URL
+    response = requests.get(image_url, stream=True)
+
+    if response.status_code == 200:
+        # Send the image as an attachment
+        return Response(
+            response.content,
+            headers={
+                'Content-Disposition': f'attachment; filename={filename}',
+                'Content-Type': 'image/png'  # or 'image/jpeg' based on the image type
+            }
+        )
+    else:
+        return "Failed to download the image", 500
+
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
+    

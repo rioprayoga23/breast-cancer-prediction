@@ -52,10 +52,10 @@
               >Home</a
             >
           </li>
-          <li>
-            <a
-              href="/predict"
-              class="text-gray-600 hover:text-pink-600 transition-colors px-2 py-1 border-b-2 border-transparent hover:border-pink-600"
+          <li
+            class="{{ 'border-b-2 text-pink-600 border-pink-600' if current_path == '/result' else '' }} px-2"
+          >
+            <a href="/predict" class="hover:text-pink-600 transition-colors"
               >Predict</a
             >
           </li>
@@ -101,8 +101,7 @@
               class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-full blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"
             ></div>
             <a
-              href="/static/output/{{ filename }}"
-              download="{{ filename }}"
+              href="{{ url_for('download_file', filename='prediction_result.png', image_url=image_url) }}"
               title="Download Prediction"
               class="w-full relative inline-flex items-center justify-center px-6 py-4 text-base font-bold text-white transition-all duration-200 bg-pink-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               role="button"
@@ -117,11 +116,11 @@
               class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#FFC107] via-[#FF9800] to-[#FF5722] rounded-full blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"
             ></div>
             <a
-              href="/"
+              href="/predict"
               class="w-full relative inline-flex items-center justify-center px-6 py-4 text-base font-bold text-pink-600 bg-white transition-all duration-200 border border-pink-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-600"
               role="button"
             >
-              Go Back
+              Predict Again
             </a>
           </div>
         </div>
