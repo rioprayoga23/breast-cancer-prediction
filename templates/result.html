@@ -36,6 +36,22 @@
         opacity: 0.3; /* Opacity hanya untuk gambar background */
         z-index: -1; /* Agar gambar ada di belakang konten */
       }
+
+      /* Notification styles */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #42b545; /* Green color */
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        opacity: 0;
+        transform: scale(0);
+        transition: opacity 0.8s ease, transform 0.5s ease;
+        font-size: 12px;
+        z-index: 1000; /* Ensure it appears above other content */
+      }
     </style>
   </head>
 
@@ -89,8 +105,38 @@
           <div class="mt-4 text-gray-600">
             <h2 class="text-lg font-semibold">Your Prediction Result</h2>
             <p class="text-sm">
-              Click the download button below to save your result.
+              Click the download button below to save or share your result.
             </p>
+          </div>
+
+          <!-- CTA Share Section -->
+          <div class="mt-4">
+            <div class="flex gap-1">
+              <button
+                id="copyLinkButton"
+                class="flex items-center px-4 py-2 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition duration-200"
+                onclick="copyLink()"
+              >
+                <img
+                  src="/static/assets/copy-link.png"
+                  alt="Copy Link"
+                  style="width: 25px; margin-right: 8px"
+                />
+                Copy Link
+              </button>
+              <button
+                id="whatsappShareButton"
+                class="flex items-center ml-2 px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-200"
+                onclick="shareToWhatsApp()"
+              >
+                <img
+                  src="/static/assets/whatsapp.png"
+                  alt="Share on WhatsApp"
+                  style="width: 25px; margin-right: 8px"
+                />
+                Share on WhatsApp
+              </button>
+            </div>
           </div>
         </div>
 
@@ -126,5 +172,54 @@
         </div>
       </div>
     </div>
+
+    <!-- Notification Element -->
+    <div id="notification" class="notification">Link copied to clipboard!</div>
+
+    <script>
+      function showNotification(message) {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.style.opacity = 1;
+        notification.style.transform = "scale(1.12)"; // Scale up on show
+
+        // Hide notification after 4 seconds
+        setTimeout(() => {
+          notification.style.transform = "scale(0)"; // Scale down on hide
+          setTimeout(() => {
+            notification.style.opacity = 0;
+          }, 500); // Wait for the scale animation to finish
+        }, 1000);
+      }
+
+      function copyLink() {
+        const link = window.location.href; // Ambil URL halaman saat ini
+        navigator.clipboard
+          .writeText(link)
+          .then(() => {
+            showNotification("Link copied to clipboard!"); // Tampilkan notifikasi
+          })
+          .catch((err) => {
+            console.error("Failed to copy: ", err);
+          });
+      }
+
+      function shareToWhatsApp() {
+        const link = window.location.href;
+        const message =
+          `🌟 I just received my prediction results, and I'm thrilled to share them with you! 🌟\n\n` +
+          `📊 Here are the details of my results:\n\n` +
+          `You can view them by clicking the link below:\n` +
+          `${link}\n\n` +
+          `Also, if you're interested in breast health predictions, check out Bcanscreen! 🚀\n` +
+          `They provide amazing insights and services to help you understand your breast health better. 🩺\n\n` +
+          `Feel free to check it out! I look forward to hearing your thoughts. 👀`;
+
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+          message
+        )}`;
+        window.open(whatsappUrl, "_blank"); // Buka WhatsApp di tab baru
+      }
+    </script>
   </body>
 </html>

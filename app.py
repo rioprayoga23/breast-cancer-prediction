@@ -44,7 +44,7 @@ def index():
 def predict():
     return render_template('predict.html')
 
-# Route untuk menangani upload gambar
+# Route untuk mengunggah gambar
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -60,36 +60,43 @@ def upload_file():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
-        # Jalankan perintah predict.py setelah file diupload
-        command = f'python3 predict.py --input "{app.config["UPLOAD_FOLDER"]}" --output "{app.config["OUTPUT_FOLDER"]}" --width 640 --height 640 --threshold 0.7 --model "./saved_model" --label "./label_map.pbtxt"'
-        
-        # Tambahkan logging untuk melihat command yang dijalankan
-        print(f"Running command: {command}")
+        try:
+            # Jalankan perintah predict.py setelah file diupload
+            command = f'python3 predict.py --input "{app.config["UPLOAD_FOLDER"]}" --output "{app.config["OUTPUT_FOLDER"]}" --width 640 --height 640 --threshold 0.7 --model "./saved_model" --label "./label_map.pbtxt"'
+            
+            # Tambahkan logging untuk melihat command yang dijalankan
+            print(f"Running command: {command}")
 
-        process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        # Cek output dan error dari proses
-        print(f"stdout: {process.stdout.decode()}")
-        print(f"stderr: {process.stderr.decode()}")
+            # Cek output dan error dari proses
+            print(f"stdout: {process.stdout.decode()}")
+            print(f"stderr: {process.stderr.decode()}")
 
-        # Cek apakah ada error dalam eksekusi predict.py
-        if process.returncode != 0:
-            return f'Error running prediction: {process.stderr.decode()}', 500
+            # Cek apakah ada error dalam eksekusi predict.py
+            if process.returncode != 0:
+                return f'Error running prediction: {process.stderr.decode()}', 500
 
-        # Upload output file to Cloudinary
-        output_filename = os.listdir(app.config['OUTPUT_FOLDER'])[0]  # Assuming one output file
-        output_filepath = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
-        
-        cloudinary_response = cloudinary.uploader.upload(output_filepath)
+            # Upload output file to Cloudinary
+            output_filename = os.listdir(app.config['OUTPUT_FOLDER'])[0]  # Assuming one output file
+            output_filepath = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
+            
+            cloudinary_response = cloudinary.uploader.upload(output_filepath)
 
-        # Get the URL of the uploaded image
-        image_url = cloudinary_response['secure_url']
+            # Get the URL of the uploaded image
+            image_url = cloudinary_response['secure_url']
 
-        # Clean up local files
-        os.remove(filepath)  # Remove the uploaded input file
-        os.remove(output_filepath)  # Remove the generated output file
+            # Clean up local files (output file)
+            os.remove(output_filepath)  # Remove the generated output file
 
-        return redirect(url_for('show_result', image_url=image_url))
+            return redirect(url_for('show_result', image_url=image_url))
+
+        finally:
+            # Always clean up the uploaded input file
+            if os.path.exists(filepath):
+                os.remove(filepath)  # Remove the uploaded input file
+
+    return 'File not allowed', 400
 
 # Route untuk menampilkan hasil prediksi
 @app.route('/result')
@@ -101,6 +108,7 @@ def show_result():
 import requests
 from flask import Response
 
+# Route untuk mengunduh gambar
 @app.route('/download/<filename>')
 def download_file(filename):
     image_url = request.args.get('image_url')
@@ -123,5 +131,5 @@ def download_file(filename):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
     
