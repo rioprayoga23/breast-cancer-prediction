@@ -64,7 +64,7 @@ def upload_file():
             # Jalankan perintah predict.py setelah file diupload
             command = f'python3 predict.py --input "{app.config["UPLOAD_FOLDER"]}" --output "{app.config["OUTPUT_FOLDER"]}" --width 640 --height 640 --threshold 0.7 --model "./saved_model" --label "./label_map.pbtxt"'
             
-            # Tambahkan logging untuk melihat command yang dijalankan
+            # Logging untuk melihat command yang dijalankan
             print(f"Running command: {command}")
 
             process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -77,32 +77,41 @@ def upload_file():
             if process.returncode != 0:
                 return f'Error running prediction: {process.stderr.decode()}', 500
 
-            # Upload output file to Cloudinary
-            output_filename = os.listdir(app.config['OUTPUT_FOLDER'])[0]  # Assuming one output file
-            output_filepath = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
-            
-            cloudinary_response = cloudinary.uploader.upload(output_filepath)
+            # Periksa apakah ada file di folder output
+            output_files = os.listdir(app.config['OUTPUT_FOLDER'])
 
-            # Get the URL of the uploaded image
-            image_url = cloudinary_response['secure_url']
+            if output_files:
+                # Jika file output ditemukan
+                output_filename = output_files[0]  # Mengasumsikan hanya ada satu file output
+                output_filepath = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
+                
+                cloudinary_response = cloudinary.uploader.upload(output_filepath)
 
-            # Clean up local files (output file)
-            os.remove(output_filepath)  # Remove the generated output file
+                # Dapatkan URL dari gambar yang diunggah
+                image_url = cloudinary_response['secure_url']
 
-            return redirect(url_for('show_result', image_url=image_url))
+                # Hapus file lokal (file output)
+                os.remove(output_filepath)  # Hapus file output yang dihasilkan
+                
+                # Arahkan ke halaman hasil dengan gambar prediksi
+                return redirect(url_for('show_result', image_url=image_url))
+            else:
+                # Jika tidak ada file output, arahkan ke halaman hasil tanpa query string
+                return redirect(url_for('show_result'))
 
         finally:
-            # Always clean up the uploaded input file
+            # Bersihkan file input yang diunggah
             if os.path.exists(filepath):
-                os.remove(filepath)  # Remove the uploaded input file
+                os.remove(filepath)  # Hapus file input yang diunggah
 
     return 'File not allowed', 400
 
 # Route untuk menampilkan hasil prediksi
 @app.route('/result')
 def show_result():
-    image_url = request.args.get('image_url')
+    image_url = request.args.get('image_url')  # Ambil URL gambar jika ada
     return render_template('result.html', image_url=image_url)
+
 
 # Route untuk mengunduh gambar
 import requests
