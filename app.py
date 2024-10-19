@@ -62,7 +62,7 @@ def upload_file():
 
         try:
             # Jalankan perintah predict.py setelah file diupload
-            command = f'python3 predict.py --input "{app.config["UPLOAD_FOLDER"]}" --output "{app.config["OUTPUT_FOLDER"]}" --width 640 --height 640 --threshold 0.7 --model "./saved_model" --label "./label_map.pbtxt"'
+            command = f'python3 predict.py --i "{app.config["UPLOAD_FOLDER"]}" --o "{app.config["OUTPUT_FOLDER"]}" --t 0.5 --m "./saved_model" --l "./label_map.pbtxt"'
             
             # Logging untuk melihat command yang dijalankan
             print(f"Running command: {command}")

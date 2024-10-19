@@ -1,1 +1,0 @@
-python predict.py --input "../input" --output "../output" --width 640 --height 640 --threshold 0.7 --model "../saved_model" --label "../label_map.pbtxt"

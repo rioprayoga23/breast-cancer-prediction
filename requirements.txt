@@ -1,7 +1,4 @@
-absl_py
-numpy
-opencv_python
 Pillow
-streamlit
+opencv-python-headless
+numpy
 tensorflow
-python-dotenv
