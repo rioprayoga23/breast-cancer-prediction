@@ -83,9 +83,71 @@
     </nav>
 
     <!-- Main Content -->
+
     <div class="container mx-auto pt-20 pb-20 flex min-h-screen">
-      <!-- Left Aligned Content -->
-      {% if image_url %}
+      {% if request.args.get('not_predict') == 'True' %}
+      <div class="container mx-auto flex-grow flex justify-center items-center">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl flex items-center flex-col gap-8"
+        >
+          <!-- Image Section -->
+          <img
+            src="https://res.cloudinary.com/dnxfvaysw/image/upload/v1729944228/hqadmwhjrsrrhrrs1kyy.jpg"
+            alt="Prediction Result"
+            class="w-full h-auto rounded-lg object-cover"
+          />
+
+          <!-- Text and Buttons Section -->
+          <div>
+            <h2 class="text-3xl font-bold text-pink-600 mb-4">
+              Your Prediction Result
+            </h2>
+            <p class="text-base leading-relaxed mb-4">
+              Our analysis shows no indication of cancer based on this
+              examination. However, if you feel this result is inaccurate, we
+              greatly appreciate your feedback to help us improve our future
+              predictions.
+            </p>
+            <p class="text-base leading-relaxed mb-6">
+              We also recommend further consultation with a specialist to ensure
+              a comprehensive understanding of your health condition.
+              <span class="text-pink-600">Thank you.</span>
+            </p>
+
+            <!-- CTA Buttons Section -->
+            <div class="w-full relative inline-flex group mb-4">
+              <div
+                class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-full blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"
+              ></div>
+              <a
+                href="/predict"
+                title="Download Prediction"
+                class="w-full relative inline-flex items-center justify-center px-6 py-4 text-base font-bold text-white transition-all duration-200 bg-pink-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                role="button"
+                >Predict Again</a
+              >
+            </div>
+
+            <!-- WhatsApp Feedback Button -->
+            <div class="w-full relative inline-flex group">
+              <div
+                class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#FF44EC] via-[#44BCFF] to-[#FF675E] rounded-full blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"
+              ></div>
+              <a
+                href="https://wa.me/6283133680933?text=Halo%2C%20saya%20ingin%20memberikan%20umpan%20balik%20terkait%20hasil%20prediksi%20saya."
+                title="Give me your feedback"
+                class="w-full relative inline-flex items-center justify-center px-6 py-4 text-base font-bold text-white transition-all duration-200 bg-blue-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                role="button"
+                target="_blank"
+                >Feedback Us</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% else %}
+      <!-- Content for predict scenario -->
       <div class="w-1/2 text-left">
         <section class="text-left mb-8">
           <h1 class="text-5xl font-extrabold text-white mb-2 leading-tight">
@@ -172,60 +234,6 @@
               role="button"
             >
               Predict Again
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {% else %}
-      <!-- Centered Content when image_url is not present -->
-      <div class="container mx-auto flex-grow flex justify-center items-center">
-        <div
-          class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl"
-        >
-          <h2 class="text-3xl font-bold text-pink-600 mb-4">
-            Your Prediction Result
-          </h2>
-          <p class="text-base leading-relaxed mb-4">
-            Our analysis shows no indication of cancer based on this
-            examination. However, if you feel this result is inaccurate, we
-            greatly appreciate your feedback to help us improve our future
-            predictions.
-          </p>
-          <p class="text-base leading-relaxed mb-6">
-            We also recommend further consultation with a specialist to ensure a
-            comprehensive understanding of your health condition.
-            <span class="text-pink-600">Thank you.</span>
-          </p>
-
-          <!-- CTA Buttons Section -->
-          <div class="w-full relative inline-flex group mb-4">
-            <div
-              class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-full blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"
-            ></div>
-            <a
-              href="/predict"
-              title="Download Prediction"
-              class="w-full relative inline-flex items-center justify-center px-6 py-4 text-base font-bold text-white transition-all duration-200 bg-pink-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-              role="button"
-            >
-              Predict Again
-            </a>
-          </div>
-
-          <!-- WhatsApp Feedback Button -->
-          <div class="w-full relative inline-flex group">
-            <div
-              class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#FF44EC] via-[#44BCFF] to-[#FF675E] rounded-full blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"
-            ></div>
-            <a
-              href="https://wa.me/6283133680933?text=Halo%2C%20saya%20ingin%20memberikan%20umpan%20balik%20terkait%20hasil%20prediksi%20saya."
-              title="Give me your feedback"
-              class="w-full relative inline-flex items-center justify-center px-6 py-4 text-base font-bold text-white transition-all duration-200 bg-blue-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              role="button"
-              target="_blank"
-            >
-              Feedback Us
             </a>
           </div>
         </div>

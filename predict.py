@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+import json
 
 HEIGHT, WIDTH = 640, 640
 
@@ -341,6 +342,9 @@ def main():
             image_predict = Image.fromarray(image_origi)
             specific_output_path = os.path.join(output_path, each_image)
             image_predict.save(specific_output_path)
+
+            result = {"score": score}
+            print(json.dumps(result))
             print("Prediction saved to", specific_output_path)
         else:
             print("No detections for", each_image)

@@ -61,48 +61,50 @@ def upload_file():
         file.save(filepath)
 
         try:
-            # Jalankan perintah predict.py setelah file diupload
+            # Run the prediction command after the file is uploaded
             command = f'python3 predict.py --i "{app.config["UPLOAD_FOLDER"]}" --o "{app.config["OUTPUT_FOLDER"]}" --t 0.5 --m "./saved_model" --l "./label_map.pbtxt"'
             
-            # Logging untuk melihat command yang dijalankan
+            # Log the command being run
             print(f"Running command: {command}")
 
             process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            # Cek output dan error dari proses
+            # Check process output and error
             print(f"stdout: {process.stdout.decode()}")
             print(f"stderr: {process.stderr.decode()}")
 
-            # Cek apakah ada error dalam eksekusi predict.py
+            # Check for errors in predict.py execution
             if process.returncode != 0:
-                return f'Error running prediction: {process.stderr.decode()}', 500
+                print(f'Error running prediction: {process.stderr.decode()}')
 
-            # Periksa apakah ada file di folder output
+            # Check for output files in the output folder
             output_files = os.listdir(app.config['OUTPUT_FOLDER'])
-
             if output_files:
-                # Jika file output ditemukan
-                output_filename = output_files[0]  # Mengasumsikan hanya ada satu file output
+                # If output file exists, upload it
+                output_filename = output_files[0]  # Assuming a single output file
                 output_filepath = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
-                
                 cloudinary_response = cloudinary.uploader.upload(output_filepath)
-
-                # Dapatkan URL dari gambar yang diunggah
-                image_url = cloudinary_response['secure_url']
-
-                # Hapus file lokal (file output)
-                os.remove(output_filepath)  # Hapus file output yang dihasilkan
                 
-                # Arahkan ke halaman hasil dengan gambar prediksi
-                return redirect(url_for('show_result', image_url=image_url))
+                # Get the uploaded image's URL from Cloudinary
+                image_url = cloudinary_response['secure_url']
+                not_predict = False  # Indicate prediction was successful
+
+                # Delete the local output file
+                os.remove(output_filepath)
             else:
-                # Jika tidak ada file output, arahkan ke halaman hasil tanpa query string
-                return redirect(url_for('show_result'))
+                # If no output file exists, upload the original image instead
+                print("No output detected. Uploading original image.")
+                cloudinary_response = cloudinary.uploader.upload(filepath)
+                image_url = cloudinary_response['secure_url']
+                not_predict = True  # Indicate prediction was unsuccessful
+
+            # Redirect to the result page with the image URL and not-predict status
+            return redirect(url_for('show_result', image_url=image_url, not_predict=not_predict))
 
         finally:
-            # Bersihkan file input yang diunggah
+            # Clean up the uploaded input file
             if os.path.exists(filepath):
-                os.remove(filepath)  # Hapus file input yang diunggah
+                os.remove(filepath)
 
     return 'File not allowed', 400
 
