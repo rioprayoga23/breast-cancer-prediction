@@ -85,7 +85,7 @@
     <!-- Main Content -->
 
     <div class="container mx-auto pt-20 pb-20 flex min-h-screen">
-      {% if request.args.get('not_predict') == 'True' %}
+      {% if request.args.get('np') == 'T' %}
       <div class="container mx-auto flex-grow flex justify-center items-center">
         <div
           class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl flex items-center flex-col gap-8"
@@ -100,18 +100,19 @@
           <!-- Text and Buttons Section -->
           <div>
             <h2 class="text-3xl font-bold text-pink-600 mb-4">
-              Your Prediction Result
+              Hasil Prediksi Anda
             </h2>
             <p class="text-base leading-relaxed mb-4">
-              Our analysis shows no indication of cancer based on this
-              examination. However, if you feel this result is inaccurate, we
-              greatly appreciate your feedback to help us improve our future
-              predictions.
+              Analisis kami menunjukkan tidak ada indikasi kanker berdasarkan
+              pemeriksaan ini. Namun, jika Anda merasa hasil ini tidak akurat,
+              kami sangat menghargai umpan balik Anda untuk membantu kami
+              meningkatkan prediksi kami selanjutnya.
             </p>
             <p class="text-base leading-relaxed mb-6">
-              We also recommend further consultation with a specialist to ensure
-              a comprehensive understanding of your health condition.
-              <span class="text-pink-600">Thank you.</span>
+              Kami juga merekomendasikan konsultasi lebih lanjut dengan
+              spesialis untuk memastikan pemahaman yang komprehensif tentang
+              kondisi kesehatan Anda.
+              <span class="text-pink-600">Terima kasih.</span>
             </p>
 
             <!-- CTA Buttons Section -->
@@ -162,7 +163,7 @@
 
         <!-- Image Section -->
         <div
-          class="p-6 bg-white shadow-md rounded-lg max-w-lg mb-8 overflow-hidden"
+          class="p-6 bg-white shadow-md rounded-lg max-w-xl mb-8 overflow-hidden"
         >
           <img
             src="{{ image_url }}"
@@ -170,14 +171,39 @@
             class="w-full h-auto object-cover rounded-lg"
           />
           <div class="mt-4 text-gray-600">
-            <h2 class="text-lg font-semibold">Your Prediction Result</h2>
-            <p class="text-sm">
-              Click the download button below to save or share your result.
+            <h2 class="text-lg font-bold text-pink-600 mb-2">
+              Hasil Prediksi Anda
+            </h2>
+            <p class="text-sm mb-4">
+              {% set category = request.args.get('c') %} {% set score =
+              request.args.get('s') %} {% if category == 'benign' %}
+              <span class="font-medium">
+                Hasil prediksi menunjukkan bahwa jaringan yang terdeteksi adalah
+                <strong class="text-red-600">jinak</strong>.
+              </span>
+              {% if score %} <br /><br />
+              Tingkat kepercayaan terhadap hasil ini adalah
+              <strong class="font-semibold text-red-600">{{ score }}</strong>.
+              Skor yang lebih tinggi (mendekati
+              <strong class="font-semibold text-red-600">1.0</strong>)
+              menunjukkan keyakinan yang lebih besar terhadap diagnosis ini. {%
+              endif %} {% elif category == 'malignant' %}
+              <span class="font-medium">
+                Hasil prediksi menunjukkan bahwa jaringan yang terdeteksi adalah
+                <strong class="text-red-600">ganas</strong>.
+              </span>
+              <br /><br />
+              Tingkat kepercayaan terhadap hasil ini adalah
+              <strong class="font-semibold text-red-600">{{ score }}</strong>.
+              Skor yang lebih tinggi (mendekati
+              <strong class="font-semibold text-red-600">1.0</strong>)
+              menunjukkan keyakinan yang lebih besar terhadap diagnosis ini. {%
+              endif %}
             </p>
           </div>
 
           <!-- CTA Share Section -->
-          <div class="mt-4">
+          <!-- <div class="mt-4">
             <div class="flex gap-1">
               <button
                 id="copyLinkButton"
@@ -191,23 +217,11 @@
                 />
                 Copy Link
               </button>
-              <button
-                id="whatsappShareButton"
-                class="flex items-center ml-2 px-3 text-sm py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-200"
-                onclick="shareToWhatsApp()"
-              >
-                <img
-                  src="/static/assets/whatsapp.png"
-                  alt="Share on WhatsApp"
-                  style="width: 20px; margin-right: 8px"
-                />
-                Share on WhatsApp
-              </button>
             </div>
-          </div>
+          </div> -->
         </div>
 
-        <div class="flex justify-center gap-3 max-w-lg">
+        <div class="flex justify-center gap-3 max-w-xl">
           <!-- Button Download -->
           <div class="w-full relative inline-flex group">
             <div
@@ -261,34 +275,17 @@
         }, 1000);
       }
 
-      function copyLink() {
-        const link = window.location.href; // Ambil URL halaman saat ini
-        navigator.clipboard
-          .writeText(link)
-          .then(() => {
-            showNotification("Link copied to clipboard!"); // Tampilkan notifikasi
-          })
-          .catch((err) => {
-            console.error("Failed to copy: ", err);
-          });
-      }
-
-      function shareToWhatsApp() {
-        const link = window.location.href;
-        const message =
-          `🌟 I just received my prediction results, and I'm thrilled to share them with you! 🌟\n\n` +
-          `📊 Here are the details of my results:\n\n` +
-          `You can view them by clicking the link below:\n` +
-          `${link}\n\n` +
-          `Also, if you're interested in breast health predictions, check out Bcanscreen! 🚀\n` +
-          `They provide amazing insights and services to help you understand your breast health better. 🩺\n\n` +
-          `Feel free to check it out! I look forward to hearing your thoughts. 👀`;
-
-        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-          message
-        )}`;
-        window.open(whatsappUrl, "_blank"); // Buka WhatsApp di tab baru
-      }
+      // function copyLink() {
+      //   const link = window.location.href; // Ambil URL halaman saat ini
+      //   navigator.clipboard
+      //     .writeText(link)
+      //     .then(() => {
+      //       showNotification("Link copied to clipboard!"); // Tampilkan notifikasi
+      //     })
+      //     .catch((err) => {
+      //       console.error("Failed to copy: ", err);
+      //     });
+      // }
     </script>
   </body>
 </html>

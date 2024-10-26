@@ -2,4 +2,4 @@ Pillow
 opencv-python-headless
 numpy
 tensorflow
-json
+simplejson

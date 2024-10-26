@@ -4,7 +4,8 @@ from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 import cloudinary
 import cloudinary.uploader
-from dotenv import load_dotenv  # Import dotenv if using .env file
+from dotenv import load_dotenv
+import simplejson as json 
 
 # Load environment variables from .env file (optional)
 load_dotenv()
@@ -51,7 +52,6 @@ def upload_file():
         return 'No file part', 400
 
     file = request.files['file']
-
     if file.filename == '':
         return 'No selected file', 400
 
@@ -61,48 +61,62 @@ def upload_file():
         file.save(filepath)
 
         try:
-            # Run the prediction command after the file is uploaded
+            # Prediction command
             command = f'python3 predict.py --i "{app.config["UPLOAD_FOLDER"]}" --o "{app.config["OUTPUT_FOLDER"]}" --t 0.5 --m "./saved_model" --l "./label_map.pbtxt"'
-            
-            # Log the command being run
             print(f"Running command: {command}")
-
             process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            # Check process output and error
+            # Log command output
             print(f"stdout: {process.stdout.decode()}")
             print(f"stderr: {process.stderr.decode()}")
 
-            # Check for errors in predict.py execution
+            # Check for prediction errors
             if process.returncode != 0:
                 print(f'Error running prediction: {process.stderr.decode()}')
 
-            # Check for output files in the output folder
+            # Check for output files
             output_files = os.listdir(app.config['OUTPUT_FOLDER'])
             if output_files:
-                # If output file exists, upload it
-                output_filename = output_files[0]  # Assuming a single output file
+                output_filename = output_files[0]  # Assuming single output file
                 output_filepath = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
-                cloudinary_response = cloudinary.uploader.upload(output_filepath)
-                
-                # Get the uploaded image's URL from Cloudinary
-                image_url = cloudinary_response['secure_url']
-                not_predict = False  # Indicate prediction was successful
 
-                # Delete the local output file
+                # Load the results from result.json
+                result_json_path = './result.txt'
+                try:
+                    with open(result_json_path, 'r') as f:
+                        result_data = json.load(f)
+                        category = result_data.get("category")
+                        score = result_data.get("score")
+                        # Log to confirm data read from JSON
+                        print(f"Loaded from result.json - Category: {category}, Score: {score}")
+                except Exception as e:
+                    print(f"Error reading result.json: {e}")
+                    category, score = None, None
+
+                # Upload output file to Cloudinary
+                cloudinary_response = cloudinary.uploader.upload(output_filepath)
+                image_url = cloudinary_response['secure_url']
                 os.remove(output_filepath)
+                not_predict = "F"
             else:
-                # If no output file exists, upload the original image instead
                 print("No output detected. Uploading original image.")
                 cloudinary_response = cloudinary.uploader.upload(filepath)
                 image_url = cloudinary_response['secure_url']
-                not_predict = True  # Indicate prediction was unsuccessful
+                not_predict = "T"
+                category, score = None, None  # Set to None if no prediction
 
-            # Redirect to the result page with the image URL and not-predict status
-            return redirect(url_for('show_result', image_url=image_url, not_predict=not_predict))
+            # Prepare the query parameters conditionally
+            query_params = {"image_url": image_url, "np": not_predict}
+            if category is not None:
+                query_params["c"] = category
+            if score is not None:
+                query_params["s"] = score
+
+            # Redirect to result page with conditional query parameters
+            return redirect(url_for('show_result', **query_params))
 
         finally:
-            # Clean up the uploaded input file
+            # Clean up uploaded input file
             if os.path.exists(filepath):
                 os.remove(filepath)
 

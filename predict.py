@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from PIL import Image
 import tensorflow as tf
-import json
+import simplejson as json 
 
 HEIGHT, WIDTH = 640, 640
 
@@ -218,6 +218,17 @@ parser.add_argument("-t", "--threshold",
                     help="Threshold for predictions")
 
 
+def update_result_json(category, score):
+    result_json_path = './result.txt'
+    result = {
+        "category": category.strip('"'),
+        "score": score
+    }
+
+    # Write the updated data back to the file
+    with open(result_json_path, 'w') as f:
+        json.dump(result, f, indent=4)  # Use indent for readability
+
 def main():
     args = parser.parse_args()
     input_path = args.input_folder_path
@@ -343,8 +354,13 @@ def main():
             specific_output_path = os.path.join(output_path, each_image)
             image_predict.save(specific_output_path)
 
-            result = {"score": score}
-            print(json.dumps(result))
+
+            # Update the result.json file with the score
+            update_result_json(str(category_index[classes[idx]]["name"]), str(round(scores[idx], 2)))
+
+            # Optionally, you can still print the score if needed
+            print("CLASSES",category_index[classes[idx]]["name"])
+
             print("Prediction saved to", specific_output_path)
         else:
             print("No detections for", each_image)
