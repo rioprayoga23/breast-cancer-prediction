@@ -92,7 +92,7 @@
         >
           <!-- Image Section -->
           <img
-            src="https://res.cloudinary.com/dnxfvaysw/image/upload/v1729944228/hqadmwhjrsrrhrrs1kyy.jpg"
+            src="{{ image_url }}"
             alt="Prediction Result"
             class="w-full h-auto rounded-lg object-cover"
           />
@@ -109,9 +109,9 @@
               meningkatkan prediksi kami selanjutnya.
             </p>
             <p class="text-base leading-relaxed mb-6">
-              Kami juga merekomendasikan konsultasi lebih lanjut dengan
-              spesialis untuk memastikan pemahaman yang komprehensif tentang
-              kondisi kesehatan Anda.
+              Kami juga menyarankan konsultasi lebih lanjut dengan dokter
+              spesialis untuk memastikan pemahaman menyeluruh tentang kondisi
+              kesehatan Anda.
               <span class="text-pink-600">Terima kasih.</span>
             </p>
 
@@ -179,6 +179,7 @@
               request.args.get('s') %} {% if category == 'benign' %}
               <span class="font-medium">
                 Hasil prediksi menunjukkan bahwa jaringan yang terdeteksi adalah
+                kanker
                 <strong class="text-red-600">jinak</strong>.
               </span>
               {% if score %} <br /><br />
@@ -190,6 +191,7 @@
               endif %} {% elif category == 'malignant' %}
               <span class="font-medium">
                 Hasil prediksi menunjukkan bahwa jaringan yang terdeteksi adalah
+                kanker
                 <strong class="text-red-600">ganas</strong>.
               </span>
               <br /><br />

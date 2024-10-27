@@ -1,4 +1,4 @@
 {
-    "category": "benign",
-    "score": "0.91"
+    "category": "malignant",
+    "score": "0.54"
 }
