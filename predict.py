@@ -214,15 +214,11 @@ parser.add_argument("-m", "--model_path",
                     help="Path to model")
 parser.add_argument("-l", "--label_map_path",
                     help="Path to label map")
-parser.add_argument("-t", "--threshold",
-                    help="Threshold for predictions")
 
-
-def update_result_json(category, score):
+def update_result_json(category):
     result_json_path = './result.txt'
     result = {
         "category": category.strip('"'),
-        "score": score
     }
 
     # Write the updated data back to the file
@@ -235,7 +231,7 @@ def main():
     output_path = args.output_folder_path
     model_path = args.model_path
     label_map_path = args.label_map_path
-    threshold = float(args.threshold)
+    threshold = float(0.3)
 
     # Load label map
     category_index = load_label_map(label_map_path)
@@ -333,9 +329,9 @@ def main():
                 # Insert label class & score
                 cv2.putText(
                     image_origi,
-                    "Class: {}, Score: {}".format(
+                    "Class: {}".format(
                         str(category_index[classes[idx]]["name"]),
-                        str(round(scores[idx], 2)),
+
                     ),
                     (
                         int(each_bbox[1] * origi_shape[1]),
@@ -356,7 +352,7 @@ def main():
 
 
             # Update the result.json file with the score
-            update_result_json(str(category_index[classes[idx]]["name"]), str(round(scores[idx], 2)))
+            update_result_json(str(category_index[classes[idx]]["name"]))
 
             # Optionally, you can still print the score if needed
             print("CLASSES",category_index[classes[idx]]["name"])
