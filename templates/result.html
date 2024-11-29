@@ -182,25 +182,14 @@
                 kanker
                 <strong class="text-red-600">jinak</strong>.
               </span>
-              {% if score %} <br /><br />
-              Tingkat kepercayaan terhadap hasil ini adalah
-              <strong class="font-semibold text-red-600">{{ score }}</strong>.
-              Skor yang lebih tinggi (mendekati
-              <strong class="font-semibold text-red-600">1.0</strong>)
-              menunjukkan keyakinan yang lebih besar terhadap diagnosis ini. {%
-              endif %} {% elif category == 'malignant' %}
+              {% elif category == 'malignant' %}
               <span class="font-medium">
                 Hasil prediksi menunjukkan bahwa jaringan yang terdeteksi adalah
                 kanker
                 <strong class="text-red-600">ganas</strong>.
               </span>
               <br /><br />
-              Tingkat kepercayaan terhadap hasil ini adalah
-              <strong class="font-semibold text-red-600">{{ score }}</strong>.
-              Skor yang lebih tinggi (mendekati
-              <strong class="font-semibold text-red-600">1.0</strong>)
-              menunjukkan keyakinan yang lebih besar terhadap diagnosis ini. {%
-              endif %}
+              {% endif %}
             </p>
           </div>
 
